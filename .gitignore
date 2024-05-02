@@ -1,0 +1,17 @@
+﻿# clion
+.idea/
+log/*
+# vs
+.vs
+
+Analyzer_linux_library*
+
+venv*
+
+
+logs*
+log/*
+zlm/log*
+
+
+
