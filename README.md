@@ -7,13 +7,12 @@
 * 微信：bilibili_bxc
 * 哔哩哔哩主页：https://space.bilibili.com/487906612
 * gitee开源地址：https://gitee.com/Vanishi/BXC_VideoAnalyzer_v2
-* github开源地址：https://github.com/any12345com/BXC_VideoAnalyzer_v2
 
 ### 软件版本介绍
 * v1版本开源地址 https://gitee.com/Vanishi/BXC_VideoAnalyzer_v1
 * v2版本开源地址 https://gitee.com/Vanishi/BXC_VideoAnalyzer_v2
 * v3版本安装包下载地址 https://gitee.com/Vanishi/BXC_VideoAnalyzer_v3
-* v4版本安装包下载地址 https://gitee.com/Vanishi/BXC_VideoAnalyzer_v4
+* v4版本安装包下载地址 https://gitee.com/Vanishi/xcms
 
 ### v2版本架构介绍
 ~~~
@@ -23,11 +22,23 @@
 （4）zlm:       基于C++开发的流媒体模块。也可以使用我编译的其他版本：https://gitee.com/Vanishi/zlm				
 
 注意：Analyzer_v2是兼容linux系统的。
-	  在编译Analyzer时需要的依赖库源码和编译文档我放在了网盘中，网盘链接：https://pan.quark.cn/s/9cf9832d6e8a 提取码：x34N
-	  Admin和Algorithm都是基于Python开发，自身是跨平台。
-	  zlm也是支持跨平台的，但我仅编译了windows版本zlm，大家需要linux版本zlm，需要自行编译。ZLMediaKit开源地址：https://gitee.com/xia-chu/ZLMediaKit
+（1）Analyzer_v2:  在编译时需要的依赖库源码和编译文档我放在了网盘中，
+【百度网盘】下载链接: https://pan.baidu.com/s/1FjQ5lZ_tzC2SaHvJo8jbOA?pwd=xcxc 提取码: xcxc 
+【夸克网盘】下载链接：https://pan.quark.cn/s/9cf9832d6e8a 提取码：x34N
 
+（2）Admin_v2:  基于Python开发，自身是跨平台
+（3）Algorithm_v2:  基于Python开发，自身是跨平台
+（4）zlm:  zlm也是支持跨平台的，但我仅编译了windows版本zlm，如需使用linux版本zlm，需要自行编译。ZLMediaKit开源地址：https://gitee.com/xia-chu/ZLMediaKit
+
+	  
 ~~~
+
+### 相关视频链接
+* v1版本视频介绍地址 https://www.bilibili.com/video/BV1dG4y1k77o
+* v1版本源码讲解（1）拉流，解码，实时算法分析，合成报警视频，编码，推流 https://www.bilibili.com/video/BV1L84y177xc
+* v1版本源码讲解（2）音频解码，音频重采样，音频编码，合成报警视频 https://www.bilibili.com/video/BV1984y1L7zB
+* v2版本视频介绍地址 https://www.bilibili.com/video/BV1CG411f7ak
+* v3版本视频介绍地址 https://www.bilibili.com/video/BV1Xy4y1P7M2
 
 ### v2版本相比于v1版本的变化
 
