@@ -65,14 +65,6 @@
 ~~~
 
 
-
-### 相关视频链接
-* v1版本视频介绍地址 https://www.bilibili.com/video/BV1dG4y1k77o
-* v1版本源码讲解（1）拉流，解码，实时算法分析，合成报警视频，编码，推流 https://www.bilibili.com/video/BV1L84y177xc
-* v1版本源码讲解（2）音频解码，音频重采样，音频编码，合成报警视频 https://www.bilibili.com/video/BV1984y1L7zB
-* v2版本视频介绍地址 https://www.bilibili.com/video/BV1CG411f7ak
-* v3版本视频介绍地址 https://www.bilibili.com/video/BV1Xy4y1P7M2
-
 ### ffmpeg命令行推流模拟摄像头
 
 ~~~
