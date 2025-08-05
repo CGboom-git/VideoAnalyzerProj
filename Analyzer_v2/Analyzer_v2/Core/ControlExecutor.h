@@ -3,12 +3,14 @@
 #include <thread>
 #include <queue>
 #include <mutex>
+
 namespace AVSAnalyzer {
 	class Scheduler;
 	class AvPullStream;
 	class AvPushStream;
 	class GenerateAlarm;
 	class Analyzer;
+	class MySQLManager;
 	struct Control;
 
 	struct VideoFrame
@@ -44,6 +46,7 @@ namespace AVSAnalyzer {
 
 	};
 
+
 	class ControlExecutor
 	{
 	public:
@@ -53,7 +56,7 @@ namespace AVSAnalyzer {
 		static void decodeAndAnalyzeVideoThread(void* arg);// 解码视频帧和实时分析视频帧
 	public:
 		bool start(std::string& msg);
-
+		void setDatabase(MySQLManager* db);
 		bool getState();
 		void setState_remove();
 	public:
@@ -67,7 +70,7 @@ namespace AVSAnalyzer {
 	private:
 		bool mState = false;
 		std::vector<std::thread*> mThreads;
-
+		MySQLManager* db = nullptr;
 	};
 }
 #endif //ANALYZER_CONTROLEXECUTOR_H

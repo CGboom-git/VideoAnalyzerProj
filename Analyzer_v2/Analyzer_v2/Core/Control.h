@@ -13,7 +13,8 @@ namespace AVSAnalyzer {
 		bool        pushStream = false;
 		std::string pushStreamUrl;
 		std::string behaviorCode;
-
+		std::string cameraID;
+		std::string algorithmType;  // 用于指定实际算法，如 "openvino_yolov5" 或 "anomaly_autoencoder"
 		int64_t alarmMinInterval = 30;// 同一布控最小的报警间隔时间（单位毫秒）
 
 	public:
@@ -25,6 +26,8 @@ namespace AVSAnalyzer {
 		int     videoChannel = 0;
 		int     videoIndex = -1;
 		int     videoFps = 0;
+		int     video_info_id;
+
 
 	public:
 

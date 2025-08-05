@@ -29,7 +29,8 @@ set(source
         Core/GenerateVideo.cpp
         Core/Scheduler.cpp
         Core/Server.cpp
-        Core/Utils/Request.cpp
+        Core/Utils/Request.cpp	
+	Core/MySQLManager.cpp
         main.cpp
         )
 

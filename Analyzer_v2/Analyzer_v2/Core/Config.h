@@ -25,7 +25,7 @@ namespace AVSAnalyzer {
 		int  controlExecutorMaxNum = 0;// 支持的分析视频最大路数
 		bool supportHardwareVideoDecode = false;
 		bool supportHardwareVideoEncode = false;
-
+		std::string algorithmType;  // 算法类型：如 "openvino_yolov5"、"anomaly_autoencoder"
 		std::vector<std::string> algorithmApiHosts;// 算法服务地址数组
 
 

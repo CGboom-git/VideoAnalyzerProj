@@ -23,12 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # print("read %s" % (__config_file))
 
 ConfigObj = {
-    "mediaApiHost"  : "http://192.168.1.3:80",
-    "mediaHttpHost" : "http://192.168.1.3:80",
-    "mediaRtmpHost" : "rtmp://192.168.1.3:1935",
-    "mediaRtspHost" : "rtsp://192.168.1.3:554",
+    "mediaApiHost"  : "http://localhost:80",
+    "mediaHttpHost" : "http://localhost:80",
+    "mediaRtmpHost" : "rtmp://localhost:1935",
+    "mediaRtspHost" : "rtsp://localhost:554",
     # "analyzerApiHost" : "http://192.168.1.3:9002"
-    "analyzerApiHost" : "http://192.168.1.8:9002"
+    "analyzerApiHost" : "http://localhost:9002"
 }
 
 print(ConfigObj)

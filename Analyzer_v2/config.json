@@ -1,7 +1,7 @@
 // config.json
 {
   "adminHost": "http://127.0.0.1:9001",
-  "rootVideoDir": "D:\\Project\\bxc\\BXC_VideoAnalyzer_v2\\data\\alarm",
+  "rootVideoDir": "D:\\NEWProj\\BXC_VideoAnalyzer_v2\\data\\alarm",
   "subVideoDirFormat": "%Y/%m/%d-%H-%M",
   "controlExecutorMaxNum": 200,
   "supportHardwareVideoDecode": false,

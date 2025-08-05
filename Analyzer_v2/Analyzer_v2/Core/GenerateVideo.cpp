@@ -57,6 +57,8 @@ namespace AVSAnalyzer {
             return false;
         }
         return true;
+#else
+        return false;
 
 #endif // !_DEBUG
 
@@ -69,6 +71,7 @@ namespace AVSAnalyzer {
         return true;
 #endif //WIN32
     }
+
 
 
     // bgr24转yuv420p

@@ -54,6 +54,9 @@
     <ClInclude Include="Core\GenerateVideo.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Core\MySQLManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Analyzer.cpp">
@@ -85,6 +88,9 @@
       <Filter>Core\Utils</Filter>
     </ClCompile>
     <ClCompile Include="Core\GenerateVideo.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\MySQLManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>

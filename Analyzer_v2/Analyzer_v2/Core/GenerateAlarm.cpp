@@ -65,6 +65,8 @@ namespace AVSAnalyzer {
         else {
             return false;
         }
+#else
+        return false;
 #endif // !_DEBUG
 
 #else

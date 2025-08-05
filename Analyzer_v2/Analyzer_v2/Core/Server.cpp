@@ -1,4 +1,6 @@
 ﻿#include "Server.h"
+#include "MySQLManager.h"
+#include "iostream"
 
 
 #ifdef WIN32
@@ -58,6 +60,17 @@ Server::~Server() {
 }
 
 void Server::start(void* arg) {
+    auto& db = AVSAnalyzer::MySQLManager::getInstance();
+    //云端
+    //db.setDatabase("192.168.153.161", "remoteuser", "123456", "videoanalyzer");
+    //本地
+    db.setDatabase("127.0.0.1", "root", "020301", "videoanalyzer");
+    if (!db.connect()) {
+        std::cerr << "MySQL 连接失败！" << std::endl;
+        exit(1);
+    }
+
+
     Scheduler* scheduler = (Scheduler*)arg;
     scheduler->setState(true);
 

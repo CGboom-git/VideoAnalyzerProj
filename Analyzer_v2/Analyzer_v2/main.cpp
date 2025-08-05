@@ -1,6 +1,7 @@
 ﻿#include "Core/Config.h"
 #include "Core/Scheduler.h"
 #include "Core/Server.h"
+#include "iostream"
 
 using namespace AVSAnalyzer;
 
