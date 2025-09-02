@@ -12,6 +12,20 @@ from lib.OpenVinoYoloV5Detector import OpenVinoYoloV5Detector
 from concurrent.futures import ThreadPoolExecutor
 import os
 
+# ---------- 关键补丁：递归转 Python 原生类型 ----------
+def _to_native(x):
+    import numpy as _np
+    if isinstance(x, dict):
+        return {k: _to_native(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [_to_native(v) for v in x]
+    if isinstance(x, _np.generic):
+        return x.item()
+    if isinstance(x, _np.ndarray):
+        return x.tolist()
+    return x
+# -----------------------------------------------------
+
 # 异步线程池（仍保留线程池以防阻塞）
 executor = ThreadPoolExecutor(max_workers=1)
 
@@ -29,7 +43,8 @@ def imageObjectDetect():
     t_total_start = time.time()
 
     try:
-        params = request.get_json()
+        # silent=True 防止非 JSON 报 400
+        params = request.get_json(silent=True) or request.form
     except:
         params = request.form
 
@@ -45,6 +60,10 @@ def imageObjectDetect():
             image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
             t_decode_end = time.time()
 
+            if image is None:
+                data["msg"] = "image decode failed"
+                return jsonify(data)
+
             if algorithm_str == "face_recognition":
                 # 执行目标检测
                 t_detect_start = time.time()
@@ -54,32 +73,32 @@ def imageObjectDetect():
                 # 提取人物框
                 person_boxes = [
                     {
-                        "x1": item["location"]["x1"],
-                        "y1": item["location"]["y1"],
-                        "x2": item["location"]["x2"],
-                        "y2": item["location"]["y2"]
+                        "x1": int(item["location"]["x1"]),
+                        "y1": int(item["location"]["y1"]),
+                        "x2": int(item["location"]["x2"]),
+                        "y2": int(item["location"]["y2"])
                     }
-                    for item in detect_data if item["class_name"] == "person"
+                    for item in detect_data if item.get("class_name") == "person"
                 ][:4]
                 print(f"[DEBUG] 检测到 {len(person_boxes)} 个 person")
 
-                # 异步提取人脸
+                # 异步提取人脸（整帧 + Center-in-Box + 防抖 已在类内实现）
                 try:
                     t_face_start = time.time()
                     future = executor.submit(face_feature_extractor.extract_faces, image, person_boxes)
-                    face_results = future.result(timeout=2.0)
+                    face_results = future.result(timeout=3.0)   # 放宽到 3s 更稳
                     t_face_end = time.time()
                     print(f"[DEBUG] 人脸提取耗时: {(t_face_end - t_face_start)*1000:.2f} ms")
-
                 except Exception as e:
                     print(f"[ERROR] 人脸提取异常: {e}")
                     face_results = []
 
-                data["result"] = {
+                # 关键：在放入 data 前做一次原生化，避免 numpy 类型
+                data["result"] = _to_native({
                     "detect_num": detect_num,
                     "detect_data": detect_data,
                     "face_features": face_results
-                }
+                })
 
             data["code"] = 1000
             data["msg"] = "success"
@@ -89,12 +108,15 @@ def imageObjectDetect():
             image_array = np.frombuffer(encoded_image_byte, np.uint8)
             image_np = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
 
+            if image_np is None:
+                return jsonify({"code": 0, "msg": "image decode failed", "result": {}})
+
             if 'anomaly_detector' not in globals():
                 global anomaly_detector
                 anomaly_detector = AnomalyDetector()
 
             result = anomaly_detector.update_and_detect(image_np)
-            print(f"[DEBUG] happen_score = {result['score']:.4f}, ready = {result['ready']}")
+            print(f"[DEBUG] happen_score = {result.get('score', 0):.4f}, ready = {result.get('ready', False)}")
 
             return jsonify({
                 "code": 1000,
@@ -102,7 +124,7 @@ def imageObjectDetect():
                 "result": {
                     "detect_data": [],  # 不包含框
                     "face_features": [],
-                    "happen_score": result["score"] if result["ready"] else 0.0
+                    "happen_score": result["score"] if result.get("ready") else 0.0
                 }
             })
 
@@ -115,12 +137,8 @@ def imageObjectDetect():
     print(algorithm_str)
     print(f"[DEBUG] 总耗时: {(t_total_end - t_total_start)*1000:.2f} ms")
 
-    # 保存响应结果到本地文件
-    with open("debug_result.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
-
-    return json.dumps(data, ensure_ascii=False)
-
+    # 用 jsonify 固定 JSON 响应头
+    return jsonify(data)
 
 
 if __name__ == "__main__":
@@ -132,11 +150,45 @@ if __name__ == "__main__":
 
     flags, _ = parse.parse_known_args(sys.argv[1:])
 
-    face_feature_extractor = FaceFeatureExtractor()
+    # ---------- InsightFace 初始化（保持你的参数） ----------
+    def _warmup_face_extractor(fe, w=1280, h=720):
+        dummy = np.zeros((h, w, 3), np.uint8)
+        fe.extract_faces(dummy, [{"x1": 0, "y1": 0, "x2": w - 1, "y2": h - 1}])
 
+    try:
+        face_feature_extractor = FaceFeatureExtractor(
+            det_size=(800, 800),     # 小脸更稳，需要更快可改回 (640,640)
+            ctx_id=0,                # 0=GPU（有 onnxruntime-gpu 时启用），无GPU会进 except 回落
+            person_box_margin=0.12,  # 归属时外扩，减少“头探出框外”
+            # 防抖参数（你的类里已默认启用）
+            kps_smooth_alpha=0.6,
+            bbox_smooth_alpha=0.6,
+            enable_kps_smooth=True,
+            enable_feat_agg=True,
+            feat_bank_len=30,
+            quality_gate=True,      # 联调期关质量门控，确保有数据
+            quality_thresh=0.35
+        )
+    except Exception as _:
+        face_feature_extractor = FaceFeatureExtractor(
+            det_size=(800, 800),
+            ctx_id=-1,               # 回落 CPU
+            person_box_margin=0.12,
+            kps_smooth_alpha=0.6,
+            bbox_smooth_alpha=0.6,
+            enable_kps_smooth=True,
+            enable_feat_agg=True,
+            feat_bank_len=30,
+            quality_gate=True,
+            quality_thresh=0.35
+        )
+
+    _warmup_face_extractor(face_feature_extractor)
+
+    # ---------- OpenVINO 检测器（保持你的原配置） ----------
     openVinoYoloV5Detector_IN_conf = {
         "weight_file": "weights/yolov5n_openvino_model/yolov5n.xml",
-        "device": "GPU"
+        "device": "GPU"   # 若无 Intel GPU 可改为 "CPU"
     }
     openVinoYoloV5Detector = OpenVinoYoloV5Detector(IN_conf=openVinoYoloV5Detector_IN_conf)
 

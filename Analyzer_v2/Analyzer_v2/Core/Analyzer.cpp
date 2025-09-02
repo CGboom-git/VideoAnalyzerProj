@@ -284,6 +284,9 @@ bool AlgorithmWithApi::parseObjectDetect(std::string& response,
     std::vector<PersonWithFace>& face_features,
     float& happenScore)
 {
+
+    face_features.clear();
+
     Json::CharReaderBuilder builder;
     JSONCPP_STRING errs;
     Json::Value root;
